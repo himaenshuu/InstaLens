@@ -16,20 +16,16 @@ export function AuthCallback({
         const { data, error } = await supabase.auth.getSession();
 
         if (error) {
-          console.error("Auth callback error:", error.message);
           onAuthError(error.message);
           return;
         }
 
         if (data.session) {
-          console.log("Authentication successful:", data.session.user);
           onAuthSuccess();
         } else {
-          console.log("No active session found");
           onAuthError("No active session found");
         }
       } catch (error) {
-        console.error("Auth callback error:", error);
         onAuthError("Authentication failed");
       }
     };
@@ -46,12 +42,8 @@ export function AuthCallback({
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state changed:", event, session);
-
       if (event === "SIGNED_IN" && session) {
         onAuthSuccess();
-      } else if (event === "SIGNED_OUT") {
-        console.log("User signed out");
       }
     });
 

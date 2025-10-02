@@ -11,12 +11,8 @@ import {
 import { Badge } from "./ui/badge";
 import { CheckCircle, XCircle, RefreshCw, Database } from "lucide-react";
 
-const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL ||
-  "https://rjkeumzejojdzazrckew.supabase.co";
-const supabaseKey =
-  import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqa2V1bXplam9qZHphenJja2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4OTU0MzcsImV4cCI6MjA3NDQ3MTQzN30.a7VOqr6rxMkJNBRQCsqCvDLbmQ3vl7DP55Igzq6bPfw";
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export function DatabaseTest() {
   const [isLoading, setIsLoading] = useState(false);

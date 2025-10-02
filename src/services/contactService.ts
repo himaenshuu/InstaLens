@@ -77,7 +77,6 @@ export const submitContactForm = async (
 
     return true;
   } catch (error) {
-    console.error("Contact form submission error:", error);
     toast.error("Failed to open email client", {
       description:
         "Please try emailing us directly at himanshuraj223422@gmail.com",

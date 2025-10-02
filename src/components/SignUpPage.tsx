@@ -36,10 +36,8 @@ export function SignUpPage({
       });
 
       if (error) {
-        console.error("Sign up error:", error.message);
         alert(`Sign up failed: ${error.message}`);
       } else if (data.user) {
-        console.log("Sign up successful:", data.user);
         if (data.user.email_confirmed_at) {
           // User is already confirmed
           onSignUpSuccess();
@@ -51,7 +49,6 @@ export function SignUpPage({
         }
       }
     } catch (error) {
-      console.error("Sign up error:", error);
       alert("Sign up failed. Please try again.");
     } finally {
       setIsLoading(false);
@@ -72,13 +69,11 @@ export function SignUpPage({
       });
 
       if (error) {
-        console.error(`${provider} sign-up error:`, error.message);
         alert(`${provider} sign-up failed: ${error.message}`);
       }
       // Note: With OAuth, the user will be redirected to the provider,
       // so we don't handle success here - it's handled in the callback
     } catch (error) {
-      console.error(`${provider} sign-up error:`, error);
       alert(`${provider} sign-up failed. Please try again.`);
     } finally {
       setIsLoading(false);

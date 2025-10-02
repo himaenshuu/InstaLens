@@ -45,22 +45,6 @@ export function PostsSection({ isVisible = true }: PostsSectionProps) {
 
       const result = await apiService.fetchPosts(pageNum, 9);
 
-      // Debug: Check what data we received
-      console.log("📊 Posts received:", result.posts.length, "posts");
-      if (result.posts.length > 0) {
-        console.log("📊 First post data:", result.posts[0]);
-        console.log(
-          "📊 First post likes type:",
-          typeof result.posts[0].likes,
-          result.posts[0].likes
-        );
-        console.log(
-          "📊 First post comments type:",
-          typeof result.posts[0].comments,
-          result.posts[0].comments
-        );
-      }
-
       if (reset) {
         setPosts(result.posts);
       } else {

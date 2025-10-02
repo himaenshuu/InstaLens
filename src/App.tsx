@@ -64,7 +64,6 @@ function AppContent() {
           }
         }
 
-        console.log("✅ Session restored from localStorage");
         toast.success("Welcome back!", {
           description: `Logged in as ${session.user.email}`,
           duration: 2000,
@@ -120,7 +119,6 @@ function AppContent() {
 
       if (username) {
         // Scrape real Instagram data
-        console.log(`Loading profile for: ${username}`);
         setSearchedInfluencer(username);
         toast.loading(`Scraping @${username}'s profile...`, {
           description: "This may take 10-30 seconds",
@@ -147,8 +145,6 @@ function AppContent() {
         setProfileData(data);
       }
     } catch (error) {
-      console.error("Failed to load profile:", error);
-
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
 
@@ -247,7 +243,6 @@ function AppContent() {
         id: "pdf-generation",
       });
     } catch (error) {
-      console.error("PDF generation error:", error);
       toast.error("Failed to generate report", {
         description:
           error instanceof Error ? error.message : "Please try again",

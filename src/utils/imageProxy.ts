@@ -2,8 +2,6 @@
 import { projectId, publicAnonKey } from "./supabase/info";
 
 export function createProxiedImageUrl(originalUrl: string): string {
-  console.log("🔧 createProxiedImageUrl called with:", originalUrl);
-
   // Don't proxy UI avatars, data URLs, or already proxied URLs
   if (
     !originalUrl ||
@@ -11,7 +9,6 @@ export function createProxiedImageUrl(originalUrl: string): string {
     originalUrl.startsWith("data:") ||
     originalUrl.includes("supabase.co/functions")
   ) {
-    console.log("✅ Returning URL unchanged (already proxied or UI avatar)");
     return originalUrl;
   }
 
@@ -24,7 +21,6 @@ export function createProxiedImageUrl(originalUrl: string): string {
     const proxiedUrl = `https://${projectId}.supabase.co/functions/v1/make-server-b9769089/proxy-image?url=${encodeURIComponent(
       originalUrl
     )}&apikey=${publicAnonKey}`;
-    console.log("📸 Proxying Instagram URL to:", proxiedUrl);
     return proxiedUrl;
   }
 
@@ -33,10 +29,8 @@ export function createProxiedImageUrl(originalUrl: string): string {
     const proxiedUrl = `https://${projectId}.supabase.co/functions/v1/make-server-b9769089/proxy-image?url=${encodeURIComponent(
       originalUrl
     )}&apikey=${publicAnonKey}`;
-    console.log("🌐 Proxying external URL to:", proxiedUrl);
     return proxiedUrl;
   }
 
-  console.log("⚠️ Returning original URL (no proxy needed)");
   return originalUrl;
 }

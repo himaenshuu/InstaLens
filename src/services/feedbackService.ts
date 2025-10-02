@@ -104,7 +104,6 @@ export const submitFeedback = async (
 
     return true;
   } catch (error) {
-    console.error("Feedback submission error:", error);
     toast.error("Failed to submit feedback", {
       description: "Please try again or email us directly",
     });

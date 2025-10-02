@@ -1,12 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
 
 // Supabase configuration from environment variables
-const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL ||
-  "https://rjkeumzejojdzazrckew.supabase.co";
-const supabaseAnonKey =
-  import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqa2V1bXplam9qZHphenJja2V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4OTU0MzcsImV4cCI6MjA3NDQ3MTQzN30.a7VOqr6rxMkJNBRQCsqCvDLbmQ3vl7DP55Igzq6bPfw";
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Missing Supabase environment variables. Please check your .env file."
+  );
+}
 
 // Create Supabase client with persistent session storage
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -19,19 +21,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
 });
 
-// Debug: Log localStorage access on load
-console.log("🔧 Supabase client initialized with persistent session storage");
-console.log(
-  "📦 LocalStorage keys:",
-  Object.keys(localStorage).filter((k) => k.includes("sb-"))
-);
-
 // Test database connection
 export async function testDatabaseConnection() {
   try {
-    console.log("Testing Supabase connection...");
-    console.log("Supabase URL:", supabaseUrl);
-
     // Test the connection by making a simple request
     // Using a non-existent table to avoid actual database operations
     const { data, error } = await supabase
@@ -41,7 +33,6 @@ export async function testDatabaseConnection() {
 
     // If we get a "relation does not exist" error, that means connection is working
     if (error && error.code === "PGRST116") {
-      console.log("✅ Database connection successful");
       return {
         success: true,
         message: "Database connection established successfully",
@@ -51,7 +42,6 @@ export async function testDatabaseConnection() {
 
     // If we get other errors, log them
     if (error) {
-      console.error("Database connection error:", error);
       return {
         success: false,
         message: "Database connection failed",
@@ -66,7 +56,6 @@ export async function testDatabaseConnection() {
       details: "Connected and ready",
     };
   } catch (error) {
-    console.error("Database connection error:", error);
     return {
       success: false,
       message: "Database connection failed",
@@ -78,8 +67,6 @@ export async function testDatabaseConnection() {
 // Test server function connection
 export async function testServerFunction() {
   try {
-    console.log("Testing server function connection...");
-
     const response = await fetch(
       `${supabaseUrl}/functions/v1/make-server-b9769089/health`,
       {
@@ -106,7 +93,6 @@ export async function testServerFunction() {
       };
     }
   } catch (error) {
-    console.error("Server function test error:", error);
     return {
       success: false,
       message: "Server function test failed",

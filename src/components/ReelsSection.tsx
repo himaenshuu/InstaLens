@@ -100,7 +100,7 @@ export function ReelsSection({ isVisible = true }: ReelsSectionProps) {
             // Small delay to avoid rate limiting
             await new Promise((resolve) => setTimeout(resolve, 100));
           } catch (err) {
-            console.error(`Failed to analyze reel ${reel.id}:`, err);
+            // Continue with next reel
           }
         }
       }

@@ -71,8 +71,6 @@ export const apiService = {
     username: string
   ): Promise<ProfileData & { posts: PostData[]; reels: ReelData[] }> {
     try {
-      console.log(`Scraping profile for: ${username}`);
-
       const response = await fetch(
         `https://${projectId}.supabase.co/functions/v1/make-server-b9769089/scrape-profile`,
         {
@@ -92,7 +90,6 @@ export const apiService = {
 
         // If it's a 500 error or network issue, provide demo data
         if (response.status >= 500 || !response.status) {
-          console.warn("Server error, falling back to demo data");
           return this.generateDemoData(username);
         }
 
@@ -106,26 +103,11 @@ export const apiService = {
         throw new Error(result.error || "Scraping failed");
       }
 
-      // Debug: Log what URLs we received from backend
-      console.log(
-        "🔍 API Response - Profile Image URL:",
-        result.data.profileImage
-      );
-      if (result.data.posts && result.data.posts.length > 0) {
-        console.log(
-          "🔍 API Response - First Post Image URL:",
-          result.data.posts[0].image
-        );
-      }
-
       currentProfileData = result.data;
       return result.data;
     } catch (error) {
-      console.error("Error scraping profile:", error);
-
       // If network fails completely, provide demo data
       if (error instanceof TypeError && error.message.includes("fetch")) {
-        console.warn("Network error, falling back to demo data");
         return this.generateDemoData(username);
       }
 
@@ -632,14 +614,12 @@ export const apiService = {
       );
 
       if (!response.ok) {
-        console.error("Failed to fetch profiles");
         return [];
       }
 
       const result = await response.json();
       return result.profiles || [];
     } catch (error) {
-      console.error("Error fetching profiles:", error);
       return [];
     }
   },

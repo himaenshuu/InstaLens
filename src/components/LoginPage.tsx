@@ -33,14 +33,11 @@ export function LoginPage({
       });
 
       if (error) {
-        console.error("Login error:", error.message);
         alert(`Login failed: ${error.message}`);
       } else if (data.user) {
-        console.log("Login successful:", data.user);
         onLoginSuccess();
       }
     } catch (error) {
-      console.error("Login error:", error);
       alert("Login failed. Please try again.");
     } finally {
       setIsLoading(false);
@@ -58,13 +55,11 @@ export function LoginPage({
       });
 
       if (error) {
-        console.error("Google sign-in error:", error.message);
         alert(`Google sign-in failed: ${error.message}`);
       }
       // Note: With OAuth, the user will be redirected to Google,
       // so we don't handle success here - it's handled in the callback
     } catch (error) {
-      console.error("Google sign-in error:", error);
       alert("Google sign-in failed. Please try again.");
     } finally {
       setIsLoading(false);

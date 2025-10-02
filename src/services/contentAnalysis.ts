@@ -90,7 +90,7 @@ export async function analyzeContent(
         };
       }
     } catch (error) {
-      console.warn("Vision API failed, using caption fallback:", error);
+      // Fallback to caption analysis
     }
   }
 
@@ -182,7 +182,7 @@ function generateInsightsFromCaption(
   // Generate descriptive tags from hashtags and keywords
   const descriptiveTags = [
     ...captionAnalysis.hashtags.slice(0, 10),
-    ...captionAnalysis.keywords.slice(0, 10)
+    ...captionAnalysis.keywords.slice(0, 10),
   ].filter((tag, index, self) => self.indexOf(tag) === index); // Remove duplicates
 
   // Infer objects from keywords
@@ -228,63 +228,84 @@ function generateInsightsFromCaption(
 /**
  * Infers vibe/ambience from caption content
  */
-function inferVibeFromCaption(caption: CaptionAnalysis): ContentInsights['vibe'] {
-  const allText = [...caption.hashtags, ...caption.keywords].join(' ').toLowerCase();
-  
+function inferVibeFromCaption(
+  caption: CaptionAnalysis
+): ContentInsights["vibe"] {
+  const allText = [...caption.hashtags, ...caption.keywords]
+    .join(" ")
+    .toLowerCase();
+
   // Check for vibe indicators
-  const isLuxury = /luxury|lavish|premium|elegant|expensive|upscale|exclusive/.test(allText);
-  const isAesthetic = /aesthetic|artsy|artistic|minimal|creative|design/.test(allText);
-  const isEnergetic = /party|energy|hype|crazy|wild|lit|festival|dance/.test(allText);
+  const isLuxury =
+    /luxury|lavish|premium|elegant|expensive|upscale|exclusive/.test(allText);
+  const isAesthetic = /aesthetic|artsy|artistic|minimal|creative|design/.test(
+    allText
+  );
+  const isEnergetic = /party|energy|hype|crazy|wild|lit|festival|dance/.test(
+    allText
+  );
   const isCasual = /casual|chill|relax|everyday|simple|daily/.test(allText);
-  const isTravel = /travel|adventure|explore|vacation|trip|journey/.test(allText);
-  const isProfessional = /professional|business|work|corporate|meeting/.test(allText);
-  
-  let primary = 'casual';
+  const isTravel = /travel|adventure|explore|vacation|trip|journey/.test(
+    allText
+  );
+  const isProfessional = /professional|business|work|corporate|meeting/.test(
+    allText
+  );
+
+  let primary = "casual";
   let secondary: string | undefined;
-  let intensity: 'subtle' | 'moderate' | 'strong' = 'moderate';
-  
+  let intensity: "subtle" | "moderate" | "strong" = "moderate";
+
   if (isLuxury) {
-    primary = 'luxury';
-    secondary = isAesthetic ? 'aesthetic' : undefined;
-    intensity = 'strong';
+    primary = "luxury";
+    secondary = isAesthetic ? "aesthetic" : undefined;
+    intensity = "strong";
   } else if (isEnergetic) {
-    primary = 'energetic';
-    secondary = 'party';
-    intensity = 'strong';
+    primary = "energetic";
+    secondary = "party";
+    intensity = "strong";
   } else if (isAesthetic) {
-    primary = 'aesthetic';
-    secondary = 'creative';
+    primary = "aesthetic";
+    secondary = "creative";
   } else if (isTravel) {
-    primary = 'adventure';
-    secondary = 'exploratory';
+    primary = "adventure";
+    secondary = "exploratory";
   } else if (isProfessional) {
-    primary = 'professional';
-    secondary = 'corporate';
+    primary = "professional";
+    secondary = "corporate";
   }
-  
+
   // Boost intensity if sentiment is strong
-  if (caption.sentiment === 'positive' && caption.emojis.length > 3) {
-    intensity = 'strong';
+  if (caption.sentiment === "positive" && caption.emojis.length > 3) {
+    intensity = "strong";
   }
-  
+
   return { primary, secondary, intensity };
 }
 
 /**
  * Estimates quality indicators from caption
  */
-function estimateQualityFromCaption(caption: CaptionAnalysis): ContentInsights['quality'] {
-  const allText = [...caption.hashtags, ...caption.keywords].join(' ').toLowerCase();
-  
+function estimateQualityFromCaption(
+  caption: CaptionAnalysis
+): ContentInsights["quality"] {
+  const allText = [...caption.hashtags, ...caption.keywords]
+    .join(" ")
+    .toLowerCase();
+
   // Quality indicators from text
-  const hasQualityKeywords = /professional|hd|quality|studio|clear|crisp/.test(allText);
-  const hasAestheticKeywords = /aesthetic|beautiful|stunning|gorgeous/.test(allText);
-  
+  const hasQualityKeywords = /professional|hd|quality|studio|clear|crisp/.test(
+    allText
+  );
+  const hasAestheticKeywords = /aesthetic|beautiful|stunning|gorgeous/.test(
+    allText
+  );
+
   return {
-    lighting: hasQualityKeywords ? 'good' : 'poor',
+    lighting: hasQualityKeywords ? "good" : "poor",
     visualAppeal: hasAestheticKeywords ? 75 : 60,
-    composition: hasQualityKeywords ? 'good' : 'poor',
-    clarity: 'medium'
+    composition: hasQualityKeywords ? "good" : "poor",
+    clarity: "medium",
   };
 }
 

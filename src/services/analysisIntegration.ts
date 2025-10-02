@@ -63,7 +63,6 @@ export async function analyzePost(
     const mediaUrl = post.image || post.thumbnail || "";
 
     if (!mediaUrl) {
-      console.warn("No media URL available for analysis");
       return null;
     }
 
@@ -85,7 +84,6 @@ export async function analyzePost(
 
     return result;
   } catch (error) {
-    console.error("Error analyzing post:", error);
     return null;
   }
 }
@@ -128,7 +126,6 @@ export async function analyzeBatch(
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
     } catch (error) {
-      console.error(`Error analyzing post ${i}:`, error);
       // Continue with next post
     }
   }

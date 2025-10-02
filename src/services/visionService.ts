@@ -69,20 +69,20 @@ export interface ContentInsights {
   // Visual analysis
   objects: string[];
   scene: string;
-  
+
   // Vibe/Ambience classification
   vibe: {
     primary: string; // Main vibe: 'casual', 'aesthetic', 'luxury', 'energetic', etc.
     secondary?: string; // Optional secondary vibe
-    intensity: 'subtle' | 'moderate' | 'strong'; // How pronounced the vibe is
+    intensity: "subtle" | "moderate" | "strong"; // How pronounced the vibe is
   };
 
   // Quality indicators
   quality: {
-    lighting: 'poor' | 'good' | 'excellent' | 'professional';
+    lighting: "poor" | "good" | "excellent" | "professional";
     visualAppeal: number; // 0-100 score
-    composition: 'poor' | 'average' | 'good' | 'excellent';
-    clarity: 'low' | 'medium' | 'high';
+    composition: "poor" | "average" | "good" | "excellent";
+    clarity: "low" | "medium" | "high";
   };
 
   // People analysis
@@ -195,8 +195,6 @@ export async function analyzeImageWithVision(
       safeSearch,
     };
   } catch (error) {
-    console.error("Google Vision API error:", error);
-
     // Return empty result on error (fallback will handle this)
     return {
       labels: [],
@@ -239,7 +237,7 @@ function extractEmotions(faceAnnotations: any[]): string[] {
 
 /**
  * Classifies the vibe/ambience of the content based on labels, colors, and context
- * 
+ *
  * @param labels - Detected labels from Vision API
  * @param colors - Dominant colors
  * @param peopleCount - Number of people detected
@@ -249,108 +247,194 @@ function classifyVibe(
   labels: VisionLabel[],
   colors: VisionColor[],
   peopleCount: number
-): ContentInsights['vibe'] {
-  const labelText = labels.map(l => l.description.toLowerCase()).join(' ');
-  const topLabels = labels.slice(0, 5).map(l => l.description.toLowerCase());
-  
+): ContentInsights["vibe"] {
+  const labelText = labels.map((l) => l.description.toLowerCase()).join(" ");
+  const topLabels = labels.slice(0, 5).map((l) => l.description.toLowerCase());
+
   // Analyze color palette for luxury indicators
-  const hasGold = colors.some(c => c.red > 200 && c.green > 170 && c.blue < 100);
-  const hasDarkTones = colors.some(c => c.red < 80 && c.green < 80 && c.blue < 80);
-  const hasBrightColors = colors.some(c => Math.max(c.red, c.green, c.blue) > 220);
-  
+  const hasGold = colors.some(
+    (c) => c.red > 200 && c.green > 170 && c.blue < 100
+  );
+  const hasDarkTones = colors.some(
+    (c) => c.red < 80 && c.green < 80 && c.blue < 80
+  );
+  const hasBrightColors = colors.some(
+    (c) => Math.max(c.red, c.green, c.blue) > 220
+  );
+
   // Luxury/Lavish indicators
-  const luxuryKeywords = ['luxury', 'elegant', 'premium', 'lavish', 'expensive', 'sophisticated', 'upscale', 'exclusive', 'designer', 'high-end'];
-  const isLuxury = luxuryKeywords.some(k => labelText.includes(k)) || hasGold;
-  
+  const luxuryKeywords = [
+    "luxury",
+    "elegant",
+    "premium",
+    "lavish",
+    "expensive",
+    "sophisticated",
+    "upscale",
+    "exclusive",
+    "designer",
+    "high-end",
+  ];
+  const isLuxury = luxuryKeywords.some((k) => labelText.includes(k)) || hasGold;
+
   // Aesthetic indicators
-  const aestheticKeywords = ['aesthetic', 'artistic', 'beautiful', 'symmetry', 'minimal', 'clean', 'modern', 'design', 'style', 'creative'];
-  const isAesthetic = aestheticKeywords.some(k => labelText.includes(k)) || (hasDarkTones && !hasBrightColors);
-  
+  const aestheticKeywords = [
+    "aesthetic",
+    "artistic",
+    "beautiful",
+    "symmetry",
+    "minimal",
+    "clean",
+    "modern",
+    "design",
+    "style",
+    "creative",
+  ];
+  const isAesthetic =
+    aestheticKeywords.some((k) => labelText.includes(k)) ||
+    (hasDarkTones && !hasBrightColors);
+
   // Energetic/Party indicators
-  const energeticKeywords = ['party', 'crowd', 'festival', 'concert', 'dance', 'celebration', 'nightlife', 'club', 'energy', 'dynamic'];
-  const isEnergetic = energeticKeywords.some(k => labelText.includes(k)) || (peopleCount > 3 && hasBrightColors);
-  
+  const energeticKeywords = [
+    "party",
+    "crowd",
+    "festival",
+    "concert",
+    "dance",
+    "celebration",
+    "nightlife",
+    "club",
+    "energy",
+    "dynamic",
+  ];
+  const isEnergetic =
+    energeticKeywords.some((k) => labelText.includes(k)) ||
+    (peopleCount > 3 && hasBrightColors);
+
   // Casual indicators
-  const casualKeywords = ['casual', 'everyday', 'simple', 'relaxed', 'comfort', 'daily', 'routine', 'ordinary'];
-  const isCasual = casualKeywords.some(k => labelText.includes(k));
-  
+  const casualKeywords = [
+    "casual",
+    "everyday",
+    "simple",
+    "relaxed",
+    "comfort",
+    "daily",
+    "routine",
+    "ordinary",
+  ];
+  const isCasual = casualKeywords.some((k) => labelText.includes(k));
+
   // Travel/Adventure indicators
-  const travelKeywords = ['travel', 'vacation', 'adventure', 'explore', 'journey', 'destination', 'tourism', 'outdoor'];
-  const isTravel = travelKeywords.some(k => labelText.includes(k));
-  
+  const travelKeywords = [
+    "travel",
+    "vacation",
+    "adventure",
+    "explore",
+    "journey",
+    "destination",
+    "tourism",
+    "outdoor",
+  ];
+  const isTravel = travelKeywords.some((k) => labelText.includes(k));
+
   // Professional/Corporate indicators
-  const professionalKeywords = ['professional', 'business', 'corporate', 'office', 'formal', 'meeting', 'conference'];
-  const isProfessional = professionalKeywords.some(k => labelText.includes(k));
-  
+  const professionalKeywords = [
+    "professional",
+    "business",
+    "corporate",
+    "office",
+    "formal",
+    "meeting",
+    "conference",
+  ];
+  const isProfessional = professionalKeywords.some((k) =>
+    labelText.includes(k)
+  );
+
   // Nature/Calm indicators
-  const natureKeywords = ['nature', 'peaceful', 'calm', 'serene', 'tranquil', 'zen', 'natural', 'organic'];
-  const isNature = natureKeywords.some(k => labelText.includes(k));
-  
+  const natureKeywords = [
+    "nature",
+    "peaceful",
+    "calm",
+    "serene",
+    "tranquil",
+    "zen",
+    "natural",
+    "organic",
+  ];
+  const isNature = natureKeywords.some((k) => labelText.includes(k));
+
   // Calculate intensity based on label scores
-  const avgScore = labels.slice(0, 3).reduce((sum, l) => sum + l.score, 0) / Math.min(3, labels.length);
-  const intensity: 'subtle' | 'moderate' | 'strong' = 
-    avgScore > 0.85 ? 'strong' : avgScore > 0.7 ? 'moderate' : 'subtle';
-  
+  const avgScore =
+    labels.slice(0, 3).reduce((sum, l) => sum + l.score, 0) /
+    Math.min(3, labels.length);
+  const intensity: "subtle" | "moderate" | "strong" =
+    avgScore > 0.85 ? "strong" : avgScore > 0.7 ? "moderate" : "subtle";
+
   // Determine primary and secondary vibes
   if (isLuxury) {
     return {
-      primary: 'luxury',
-      secondary: isAesthetic ? 'aesthetic' : isProfessional ? 'professional' : undefined,
-      intensity
+      primary: "luxury",
+      secondary: isAesthetic
+        ? "aesthetic"
+        : isProfessional
+        ? "professional"
+        : undefined,
+      intensity,
     };
   }
-  
+
   if (isEnergetic) {
     return {
-      primary: 'energetic',
-      secondary: isTravel ? 'adventure' : 'party',
-      intensity: 'strong'
+      primary: "energetic",
+      secondary: isTravel ? "adventure" : "party",
+      intensity: "strong",
     };
   }
-  
+
   if (isAesthetic) {
     return {
-      primary: 'aesthetic',
-      secondary: isNature ? 'natural' : 'minimalist',
-      intensity
+      primary: "aesthetic",
+      secondary: isNature ? "natural" : "minimalist",
+      intensity,
     };
   }
-  
+
   if (isTravel) {
     return {
-      primary: 'adventure',
-      secondary: isNature ? 'natural' : 'exploratory',
-      intensity
+      primary: "adventure",
+      secondary: isNature ? "natural" : "exploratory",
+      intensity,
     };
   }
-  
+
   if (isProfessional) {
     return {
-      primary: 'professional',
-      secondary: 'corporate',
-      intensity
+      primary: "professional",
+      secondary: "corporate",
+      intensity,
     };
   }
-  
+
   if (isNature) {
     return {
-      primary: 'natural',
-      secondary: 'calm',
-      intensity
+      primary: "natural",
+      secondary: "calm",
+      intensity,
     };
   }
-  
+
   // Default to casual
   return {
-    primary: isCasual || peopleCount > 0 ? 'casual' : 'general',
-    secondary: peopleCount > 0 ? 'social' : undefined,
-    intensity
+    primary: isCasual || peopleCount > 0 ? "casual" : "general",
+    secondary: peopleCount > 0 ? "social" : undefined,
+    intensity,
   };
 }
 
 /**
  * Analyzes image quality indicators from Vision API data
- * 
+ *
  * @param labels - Detected labels
  * @param colors - Color information
  * @param confidence - Overall detection confidence
@@ -360,70 +444,81 @@ function analyzeQuality(
   labels: VisionLabel[],
   colors: VisionColor[],
   confidence: number
-): ContentInsights['quality'] {
-  const labelText = labels.map(l => l.description.toLowerCase()).join(' ');
-  
+): ContentInsights["quality"] {
+  const labelText = labels.map((l) => l.description.toLowerCase()).join(" ");
+
   // Lighting analysis from labels and colors
   const lightingKeywords = {
-    excellent: ['studio', 'professional', 'illuminated', 'bright', 'well-lit'],
-    good: ['natural light', 'daylight', 'clear', 'sunny'],
-    poor: ['dark', 'shadow', 'dim', 'low light', 'night', 'underexposed']
+    excellent: ["studio", "professional", "illuminated", "bright", "well-lit"],
+    good: ["natural light", "daylight", "clear", "sunny"],
+    poor: ["dark", "shadow", "dim", "low light", "night", "underexposed"],
   };
-  
-  let lighting: ContentInsights['quality']['lighting'] = 'good';
-  if (lightingKeywords.excellent.some(k => labelText.includes(k))) {
-    lighting = 'excellent';
-  } else if (lightingKeywords.poor.some(k => labelText.includes(k))) {
-    lighting = 'poor';
+
+  let lighting: ContentInsights["quality"]["lighting"] = "good";
+  if (lightingKeywords.excellent.some((k) => labelText.includes(k))) {
+    lighting = "excellent";
+  } else if (lightingKeywords.poor.some((k) => labelText.includes(k))) {
+    lighting = "poor";
   }
-  
+
   // Check for professional indicators
-  if (['professional', 'studio', 'commercial', 'advertising'].some(k => labelText.includes(k))) {
-    lighting = 'professional';
+  if (
+    ["professional", "studio", "commercial", "advertising"].some((k) =>
+      labelText.includes(k)
+    )
+  ) {
+    lighting = "professional";
   }
-  
+
   // Visual appeal score based on multiple factors
   let visualAppeal = Math.round(confidence * 100);
-  
+
   // Boost for aesthetic indicators
-  if (['aesthetic', 'beautiful', 'stunning', 'gorgeous'].some(k => labelText.includes(k))) {
+  if (
+    ["aesthetic", "beautiful", "stunning", "gorgeous"].some((k) =>
+      labelText.includes(k)
+    )
+  ) {
     visualAppeal = Math.min(100, visualAppeal + 15);
   }
-  
+
   // Boost for color harmony (similar colors or complementary)
   if (colors.length >= 2) {
     const colorVariance = calculateColorVariance(colors);
     if (colorVariance < 50) visualAppeal = Math.min(100, visualAppeal + 10); // Monochromatic
   }
-  
+
   // Composition analysis
   const compositionKeywords = {
-    excellent: ['symmetry', 'balance', 'composition', 'framing'],
-    good: ['centered', 'focus', 'sharp'],
-    poor: ['blurry', 'unfocused', 'cropped']
+    excellent: ["symmetry", "balance", "composition", "framing"],
+    good: ["centered", "focus", "sharp"],
+    poor: ["blurry", "unfocused", "cropped"],
   };
-  
-  let composition: ContentInsights['quality']['composition'] = 'average';
-  if (compositionKeywords.excellent.some(k => labelText.includes(k))) {
-    composition = 'excellent';
-  } else if (compositionKeywords.good.some(k => labelText.includes(k))) {
-    composition = 'good';
-  } else if (compositionKeywords.poor.some(k => labelText.includes(k))) {
-    composition = 'poor';
+
+  let composition: ContentInsights["quality"]["composition"] = "average";
+  if (compositionKeywords.excellent.some((k) => labelText.includes(k))) {
+    composition = "excellent";
+  } else if (compositionKeywords.good.some((k) => labelText.includes(k))) {
+    composition = "good";
+  } else if (compositionKeywords.poor.some((k) => labelText.includes(k))) {
+    composition = "poor";
   } else if (confidence > 0.85) {
-    composition = 'good';
+    composition = "good";
   }
-  
+
   // Clarity based on confidence and labels
-  const clarity: ContentInsights['quality']['clarity'] = 
-    confidence > 0.85 && !labelText.includes('blurry') ? 'high' :
-    confidence > 0.7 ? 'medium' : 'low';
-  
+  const clarity: ContentInsights["quality"]["clarity"] =
+    confidence > 0.85 && !labelText.includes("blurry")
+      ? "high"
+      : confidence > 0.7
+      ? "medium"
+      : "low";
+
   return {
     lighting,
     visualAppeal,
     composition,
-    clarity
+    clarity,
   };
 }
 
@@ -432,21 +527,27 @@ function analyzeQuality(
  */
 function calculateColorVariance(colors: VisionColor[]): number {
   if (colors.length < 2) return 0;
-  
+
   const avgR = colors.reduce((sum, c) => sum + c.red, 0) / colors.length;
   const avgG = colors.reduce((sum, c) => sum + c.green, 0) / colors.length;
   const avgB = colors.reduce((sum, c) => sum + c.blue, 0) / colors.length;
-  
-  const variance = colors.reduce((sum, c) => {
-    return sum + Math.abs(c.red - avgR) + Math.abs(c.green - avgG) + Math.abs(c.blue - avgB);
-  }, 0) / colors.length;
-  
+
+  const variance =
+    colors.reduce((sum, c) => {
+      return (
+        sum +
+        Math.abs(c.red - avgR) +
+        Math.abs(c.green - avgG) +
+        Math.abs(c.blue - avgB)
+      );
+    }, 0) / colors.length;
+
   return variance;
 }
 
 /**
  * Generates enhanced descriptive tags from labels
- * 
+ *
  * @param labels - Vision API labels
  * @param contentType - Detected content type
  * @returns Array of smart, descriptive tags
@@ -456,29 +557,33 @@ function generateDescriptiveTags(
   contentType: string
 ): string[] {
   const tags = new Set<string>();
-  
+
   // Add high-confidence labels as tags
   labels
-    .filter(l => l.score > 0.6)
+    .filter((l) => l.score > 0.6)
     .slice(0, 15)
-    .forEach(l => {
+    .forEach((l) => {
       const tag = l.description.toLowerCase();
       tags.add(tag);
-      
+
       // Add related contextual tags
-      if (tag.includes('food')) tags.add('culinary');
-      if (tag.includes('fashion') || tag.includes('clothing')) tags.add('style');
-      if (tag.includes('nature') || tag.includes('outdoor')) tags.add('outdoor');
-      if (tag.includes('person') || tag.includes('people')) tags.add('portrait');
-      if (tag.includes('city') || tag.includes('urban')) tags.add('urban');
-      if (tag.includes('beach') || tag.includes('ocean')) tags.add('coastal');
-      if (tag.includes('night')) tags.add('nighttime');
-      if (tag.includes('car') || tag.includes('vehicle')) tags.add('automotive');
+      if (tag.includes("food")) tags.add("culinary");
+      if (tag.includes("fashion") || tag.includes("clothing"))
+        tags.add("style");
+      if (tag.includes("nature") || tag.includes("outdoor"))
+        tags.add("outdoor");
+      if (tag.includes("person") || tag.includes("people"))
+        tags.add("portrait");
+      if (tag.includes("city") || tag.includes("urban")) tags.add("urban");
+      if (tag.includes("beach") || tag.includes("ocean")) tags.add("coastal");
+      if (tag.includes("night")) tags.add("nighttime");
+      if (tag.includes("car") || tag.includes("vehicle"))
+        tags.add("automotive");
     });
-  
+
   // Add content type as tag
-  tags.add(contentType.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-'));
-  
+  tags.add(contentType.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-"));
+
   return Array.from(tags).slice(0, 20);
 }
 
@@ -521,13 +626,24 @@ export function formatContentInsights(
   const confidence = calculateConfidence(visionResult.labels);
 
   // Generate enhanced descriptive tags
-  const descriptiveTags = generateDescriptiveTags(visionResult.labels, contentType);
+  const descriptiveTags = generateDescriptiveTags(
+    visionResult.labels,
+    contentType
+  );
 
   // Classify vibe/ambience
-  const vibe = classifyVibe(visionResult.labels, visionResult.colors, visionResult.faces.count);
+  const vibe = classifyVibe(
+    visionResult.labels,
+    visionResult.colors,
+    visionResult.faces.count
+  );
 
   // Analyze quality indicators
-  const quality = analyzeQuality(visionResult.labels, visionResult.colors, confidence);
+  const quality = analyzeQuality(
+    visionResult.labels,
+    visionResult.colors,
+    confidence
+  );
 
   return {
     contentType,
