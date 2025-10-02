@@ -223,7 +223,6 @@ export function LandingPage({ onLogin }: LandingPageProps) {
             <h1 className="text-4xl md:text-7xl font-bold mb-6 min-h-[120px] md:min-h-[180px]">
               <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 animate-gradient bg-clip-text text-transparent">
                 {typedText}
-                <span className="typing-cursor">|</span>
               </span>
             </h1>
 
