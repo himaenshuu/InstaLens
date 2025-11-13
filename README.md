@@ -118,17 +118,6 @@
 
 ---
 
-## 🚀 Quick Start
-
-### Prerequisites
-```bash
-Node.js >= 16.x
-npm >= 8.x
-Git
-```
-
----
-
 ## 🎓 Technical Highlights for Recruiters
 
 ### **1. Full-Stack Development**
