@@ -76,7 +76,7 @@ export function ProfileContent({
                     profileData?.postsCount ||
                       (typeof profileData?.posts === "number"
                         ? profileData.posts
-                        : 0)
+                        : 0),
                   )}
                 </div>
                 <div className="text-sm text-muted-foreground">Posts</div>

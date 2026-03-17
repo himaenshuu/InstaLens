@@ -6,7 +6,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
-    "Missing Supabase environment variables. Please check your .env file."
+    "Missing Supabase environment variables. Please check your .env file.",
   );
 }
 
@@ -75,7 +75,7 @@ export async function testServerFunction() {
           Authorization: `Bearer ${supabaseAnonKey}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (response.ok) {

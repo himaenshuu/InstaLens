@@ -47,7 +47,7 @@ export function SearchWithSuggestions({
     const filtered = profiles.filter(
       (profile) =>
         profile.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        profile.display_name.toLowerCase().includes(searchTerm.toLowerCase())
+        profile.display_name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredProfiles(filtered);
   }, [searchTerm, profiles]);
@@ -133,7 +133,7 @@ export function SearchWithSuggestions({
                   onError={(e) => {
                     const img = e.target as HTMLImageElement;
                     img.src = createProxiedImageUrl(
-                      `https://ui-avatars.com/api/?name=${profile.display_name}&background=6366f1&color=fff`
+                      `https://ui-avatars.com/api/?name=${profile.display_name}&background=6366f1&color=fff`,
                     );
                   }}
                 />

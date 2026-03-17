@@ -14,13 +14,13 @@ function isBypassUrl(url: string): boolean {
 
 function createSupabaseProxyUrl(originalUrl: string): string {
   return `https://${projectId}.supabase.co/functions/v1/make-server-b9769089/proxy-image?url=${encodeURIComponent(
-    originalUrl
+    originalUrl,
   )}&apikey=${encodeURIComponent(publicAnonKey)}`;
 }
 
 function createWeservProxyUrl(originalUrl: string): string {
   return `https://images.weserv.nl/?url=${encodeURIComponent(
-    originalUrl
+    originalUrl,
   )}&output=webp`;
 }
 

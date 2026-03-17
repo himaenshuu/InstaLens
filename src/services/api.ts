@@ -69,7 +69,7 @@ let currentProfileData:
 
 export const apiService = {
   async scrapeProfile(
-    username: string
+    username: string,
   ): Promise<ProfileData & { posts: PostData[]; reels: ReelData[] }> {
     try {
       const response = await fetch(
@@ -81,7 +81,7 @@ export const apiService = {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ username }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -95,7 +95,8 @@ export const apiService = {
         }
 
         throw new Error(
-          errorData.error || `HTTP ${response.status}: Failed to scrape profile`
+          errorData.error ||
+            `HTTP ${response.status}: Failed to scrape profile`,
         );
       }
 
@@ -117,7 +118,7 @@ export const apiService = {
   },
 
   generateDemoData(
-    username: string
+    username: string,
   ): ProfileData & { posts: PostData[]; reels: ReelData[] } {
     const postsArray: PostData[] = [];
     for (let i = 0; i < 12; i++) {
@@ -200,7 +201,7 @@ export const apiService = {
 
   async fetchPosts(
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<{ posts: PostData[]; hasMore: boolean; total: number }> {
     await delay(300);
 
@@ -210,7 +211,7 @@ export const apiService = {
       const endIndex = startIndex + limit;
       const paginatedPosts = currentProfileData.posts.slice(
         startIndex,
-        endIndex
+        endIndex,
       );
 
       return {
@@ -368,7 +369,7 @@ export const apiService = {
 
   async fetchReels(
     page: number = 1,
-    limit: number = 5
+    limit: number = 5,
   ): Promise<{ reels: ReelData[]; hasMore: boolean; total: number }> {
     await delay(300);
 
@@ -378,7 +379,7 @@ export const apiService = {
       const endIndex = startIndex + limit;
       const paginatedReels = currentProfileData.reels.slice(
         startIndex,
-        endIndex
+        endIndex,
       );
 
       return {
@@ -479,7 +480,7 @@ export const apiService = {
   },
 
   async fetchAnalytics(
-    timeRange: "7d" | "30d" | "90d" = "30d"
+    timeRange: "7d" | "30d" | "90d" = "30d",
   ): Promise<AnalyticsData> {
     await delay(1000);
 
@@ -611,7 +612,7 @@ export const apiService = {
           headers: {
             Authorization: `Bearer ${publicAnonKey}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -623,7 +624,9 @@ export const apiService = {
 
       return profiles.map((profile: any) => ({
         ...profile,
-        profile_image_url: createProxiedImageUrl(profile.profile_image_url || ""),
+        profile_image_url: createProxiedImageUrl(
+          profile.profile_image_url || "",
+        ),
       }));
     } catch (error) {
       return [];

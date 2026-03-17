@@ -70,13 +70,13 @@ export function DatabaseTest() {
           (error.details && error.details.includes("does not exist")))
       ) {
         console.log(
-          "✅ Database connection successful - table not found error expected"
+          "✅ Database connection successful - table not found error expected",
         );
         setConnectionStatus("success");
         setLastTestTime(new Date().toLocaleTimeString());
       } else if (error) {
         console.error(
-          "❌ Unexpected database error - this might still be OK if it's a permission error:"
+          "❌ Unexpected database error - this might still be OK if it's a permission error:",
         );
         console.error("Full error object:", error);
 
@@ -88,7 +88,7 @@ export function DatabaseTest() {
           (error.message && error.message.includes("JWT"))
         ) {
           console.log(
-            "✅ Connection successful - authentication/permission error expected for test table"
+            "✅ Connection successful - authentication/permission error expected for test table",
           );
           setConnectionStatus("success");
           setLastTestTime(new Date().toLocaleTimeString());
@@ -108,7 +108,7 @@ export function DatabaseTest() {
       console.error("Database connection error:", error);
       setConnectionStatus("error");
       setErrorMessage(
-        error.message || error.toString() || "Unknown error occurred"
+        error.message || error.toString() || "Unknown error occurred",
       );
       setLastTestTime(new Date().toLocaleTimeString());
     } finally {
@@ -146,7 +146,7 @@ export function DatabaseTest() {
         setLastTestTime(new Date().toLocaleTimeString());
       } else {
         throw new Error(
-          `Supabase API returned ${response.status}: ${response.statusText}`
+          `Supabase API returned ${response.status}: ${response.statusText}`,
         );
       }
     } catch (error: any) {
@@ -156,7 +156,7 @@ export function DatabaseTest() {
       console.error("Supabase health check error:", error);
       setConnectionStatus("error");
       setErrorMessage(
-        error.message || error.toString() || "Failed to reach Supabase"
+        error.message || error.toString() || "Failed to reach Supabase",
       );
       setLastTestTime(new Date().toLocaleTimeString());
     } finally {

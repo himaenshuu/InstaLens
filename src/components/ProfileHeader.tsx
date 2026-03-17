@@ -17,7 +17,7 @@ export function ProfileHeader({
 }: ProfileHeaderProps) {
   const originalProfileImage = profileData?.profileImage || "";
   const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-    profileData?.name || profileData?.username || "User"
+    profileData?.name || profileData?.username || "User",
   )}&background=6366f1&color=fff&size=128`;
 
   const avatarCandidates = [
@@ -147,7 +147,7 @@ export function ProfileHeader({
                     profileData.postsCount ||
                       (typeof profileData.posts === "number"
                         ? profileData.posts
-                        : 0)
+                        : 0),
                   )}
                 </div>
                 <div className="text-muted-foreground/80 text-sm">Posts</div>

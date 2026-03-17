@@ -11,7 +11,7 @@ app.use("*", logger(console.log));
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
 const PROFILE_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -19,7 +19,7 @@ const MAX_CACHED_PROFILES = 10;
 
 const buildDefaultAvatar = (username: string) =>
   `https://ui-avatars.com/api/?name=${encodeURIComponent(
-    username
+    username,
   )}&background=6366f1&color=fff&size=128`;
 
 const pickProfileImage = (profileData: any, username: string): string => {
@@ -37,7 +37,7 @@ const pickProfileImage = (profileData: any, username: string): string => {
   ];
 
   const firstValid = candidates.find(
-    (value) => typeof value === "string" && value.trim().length > 0
+    (value) => typeof value === "string" && value.trim().length > 0,
   );
 
   return firstValid || buildDefaultAvatar(username);
@@ -100,7 +100,9 @@ const pruneDatabaseProfileCache = async () => {
       return;
     }
 
-    const idsToDelete = data.slice(MAX_CACHED_PROFILES).map((row: any) => row.id);
+    const idsToDelete = data
+      .slice(MAX_CACHED_PROFILES)
+      .map((row: any) => row.id);
 
     if (idsToDelete.length > 0) {
       const { error: deleteError } = await supabase
@@ -109,7 +111,10 @@ const pruneDatabaseProfileCache = async () => {
         .in("id", idsToDelete);
 
       if (deleteError) {
-        console.error("Failed to prune old DB profile cache entries:", deleteError);
+        console.error(
+          "Failed to prune old DB profile cache entries:",
+          deleteError,
+        );
       } else {
         console.log(`Pruned ${idsToDelete.length} old DB cached profiles`);
       }
@@ -132,11 +137,11 @@ app.get("/make-server-b9769089/health", async (c) => {
 // Scrape Instagram profile using Apify
 app.post("/make-server-b9769089/scrape-profile", async (c) => {
   const startTime = Date.now();
-  let username = '';
-  
+  let username = "";
+
   try {
     console.log("=== SCRAPE PROFILE REQUEST START ===");
-    
+
     // Parse request body with error handling
     let requestBody;
     try {
@@ -145,13 +150,19 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
       console.log(`Request body parsed successfully:`, requestBody);
     } catch (parseError) {
       console.error("Failed to parse request body:", parseError);
-      return c.json({ 
-        error: "Invalid JSON in request body",
-        details: parseError instanceof Error ? parseError.message : String(parseError)
-      }, 400);
+      return c.json(
+        {
+          error: "Invalid JSON in request body",
+          details:
+            parseError instanceof Error
+              ? parseError.message
+              : String(parseError),
+        },
+        400,
+      );
     }
 
-    if (!username || typeof username !== 'string' || username.trim() === '') {
+    if (!username || typeof username !== "string" || username.trim() === "") {
       console.error("Invalid username provided:", username);
       return c.json({ error: "Valid username is required" }, 400);
     }
@@ -172,7 +183,7 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
       const { data: cachedProfile, error: cachedProfileError } = await supabase
         .from("influencer_profiles")
         .select(
-          "id, username, display_name, profile_image_url, bio, followers_count, following_count, posts_count, is_verified, last_scraped_at"
+          "id, username, display_name, profile_image_url, bio, followers_count, following_count, posts_count, is_verified, last_scraped_at",
         )
         .eq("username", username)
         .maybeSingle();
@@ -194,7 +205,7 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
           supabase
             .from("posts")
             .select(
-              "instagram_post_id, image_url, caption, likes_count, comments_count, posted_at"
+              "instagram_post_id, image_url, caption, likes_count, comments_count, posted_at",
             )
             .eq("profile_id", cachedProfile.id)
             .order("updated_at", { ascending: false })
@@ -202,7 +213,7 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
           supabase
             .from("reels")
             .select(
-              "instagram_reel_id, thumbnail_url, caption, views_count, likes_count, comments_count, duration, posted_at"
+              "instagram_reel_id, thumbnail_url, caption, views_count, likes_count, comments_count, duration, posted_at",
             )
             .eq("profile_id", cachedProfile.id)
             .order("updated_at", { ascending: false })
@@ -255,11 +266,14 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
     // Check if we have recent cached data (valid for 7 days)
     const cacheKey = `profile:${username.toLowerCase()}`;
     let cachedData = null;
-    
+
     try {
       console.log(`Checking cache for key: ${cacheKey}`);
       cachedData = await kv.get(cacheKey);
-      console.log(`Cache result:`, cachedData ? 'Data found' : 'No cached data');
+      console.log(
+        `Cache result:`,
+        cachedData ? "Data found" : "No cached data",
+      );
     } catch (cacheError) {
       console.error("Cache read error (table may not exist):", cacheError);
       console.log("Continuing without cache - will scrape from Apify directly");
@@ -300,7 +314,7 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
     try {
       console.log(`Making request to Apify API with actor: ${actorId}`);
       console.log(`Run input:`, JSON.stringify(runInput, null, 2));
-      
+
       runResponse = await fetch(
         `https://api.apify.com/v2/acts/${encodeURIComponent(actorId)}/runs`,
         {
@@ -310,29 +324,41 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(runInput),
-        }
+        },
       );
-      
+
       console.log(`Apify API response status: ${runResponse.status}`);
     } catch (fetchError) {
       console.error("Network error calling Apify API:", fetchError);
-      return c.json({ 
-        error: "Network error connecting to scraping service",
-        details: fetchError instanceof Error ? fetchError.message : String(fetchError)
-      }, 500);
+      return c.json(
+        {
+          error: "Network error connecting to scraping service",
+          details:
+            fetchError instanceof Error
+              ? fetchError.message
+              : String(fetchError),
+        },
+        500,
+      );
     }
 
     if (!runResponse.ok) {
       const errorText = await runResponse.text();
       console.error("Failed to start Apify run:", errorText);
       console.error("Response status:", runResponse.status);
-      console.error("Response headers:", Object.fromEntries(runResponse.headers.entries()));
-      
-      return c.json({ 
-        error: "Failed to start scraping", 
-        details: errorText,
-        status: runResponse.status 
-      }, 500);
+      console.error(
+        "Response headers:",
+        Object.fromEntries(runResponse.headers.entries()),
+      );
+
+      return c.json(
+        {
+          error: "Failed to start scraping",
+          details: errorText,
+          status: runResponse.status,
+        },
+        500,
+      );
     }
 
     const runData = await runResponse.json();
@@ -352,7 +378,7 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
         `https://api.apify.com/v2/actor-runs/${runId}`,
         {
           headers: { Authorization: `Bearer ${apifyToken}` },
-        }
+        },
       );
 
       if (statusResponse.ok) {
@@ -367,7 +393,7 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
             `https://api.apify.com/v2/datasets/${statusData.data.defaultDatasetId}/items`,
             {
               headers: { Authorization: `Bearer ${apifyToken}` },
-            }
+            },
           );
 
           if (resultsResponse.ok) {
@@ -478,7 +504,9 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
     } catch (cacheError) {
       console.error("Failed to cache scraped data:", cacheError);
       // Continue without caching if there's an error
-      console.log(`Successfully scraped data for ${username} (cache write failed)`);
+      console.log(
+        `Successfully scraped data for ${username} (cache write failed)`,
+      );
     }
 
     // Persist durable cache in database tables
@@ -493,17 +521,21 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
             bio: formattedData.bio,
             followers_count: formattedData.followers,
             following_count: formattedData.following,
-            posts_count: formattedData.postsCount || formattedData.posts?.length || 0,
+            posts_count:
+              formattedData.postsCount || formattedData.posts?.length || 0,
             is_verified: formattedData.isVerified,
             last_scraped_at: new Date().toISOString(),
           },
-          { onConflict: "username" }
+          { onConflict: "username" },
         )
         .select("id")
         .single();
 
       if (profileError) {
-        console.error("Failed to upsert influencer_profiles cache:", profileError);
+        console.error(
+          "Failed to upsert influencer_profiles cache:",
+          profileError,
+        );
       } else if (profileRow?.id) {
         const profileId = profileRow.id;
 
@@ -522,7 +554,9 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
             posted_at: post.timestamp || "Recently",
           }));
 
-          const { error: postsError } = await supabase.from("posts").insert(postsPayload);
+          const { error: postsError } = await supabase
+            .from("posts")
+            .insert(postsPayload);
           if (postsError) {
             console.error("Failed to cache posts in database:", postsError);
           }
@@ -541,7 +575,9 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
             posted_at: reel.timestamp || "Recently",
           }));
 
-          const { error: reelsError } = await supabase.from("reels").insert(reelsPayload);
+          const { error: reelsError } = await supabase
+            .from("reels")
+            .insert(reelsPayload);
           if (reelsError) {
             console.error("Failed to cache reels in database:", reelsError);
           }
@@ -562,22 +598,22 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
   } catch (error) {
     const endTime = Date.now();
     const duration = endTime - startTime;
-    
+
     console.error("=== SCRAPING ERROR ===");
     console.error("Username:", username);
     console.error("Duration:", duration + "ms");
     console.error("Error:", error);
     console.error("Error type:", typeof error);
     console.error("Error constructor:", error?.constructor?.name);
-    
+
     if (error instanceof Error) {
       console.error("Error message:", error.message);
       console.error("Error stack:", error.stack);
     }
-    
+
     // Return fallback data in case of any error
     console.log("Returning fallback data due to error");
-    
+
     const fallbackData = {
       profileImage: buildDefaultAvatar(username),
       name: username,
@@ -590,7 +626,7 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
       posts: [],
       reels: [],
     };
-    
+
     return c.json({
       success: true,
       data: fallbackData,
@@ -599,8 +635,8 @@ app.post("/make-server-b9769089/scrape-profile", async (c) => {
       note: "Fallback data - scraping encountered an error",
       error_info: {
         message: error instanceof Error ? error.message : String(error),
-        duration: duration
-      }
+        duration: duration,
+      },
     });
   }
 });
@@ -653,7 +689,7 @@ app.get("/make-server-b9769089/profiles", async (c) => {
     const { data, error } = await supabase
       .from("influencer_profiles")
       .select(
-        "username, display_name, profile_image_url, followers_count, is_verified"
+        "username, display_name, profile_image_url, followers_count, is_verified",
       )
       .order("last_scraped_at", { ascending: false, nullsFirst: false })
       .limit(MAX_CACHED_PROFILES);
