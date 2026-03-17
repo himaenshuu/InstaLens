@@ -1,4 +1,3 @@
-
 <div align="center">
 
 # 📸 InstaLens
@@ -10,7 +9,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
 
-[Live Demo](#) • [Documentation](./SETUP.md) • [Deployment Guide](./VERCEL_DEPLOYMENT.md)
+[Live Demo](https://drive.google.com/file/d/1hYIJlTjcyP-uu--Eozp_xX0uU_p1LZw_/view) • [Live Site](https://insta-lens.vercel.app/) • [Documentation](./Readme.md) • [Deployment Guide](https://himaenshuu.github.io/InstaLens/)
 
 </div>
 
@@ -116,92 +115,6 @@
 - Smooth animations and transitions
 - Loading states and error handling
 - Toast notifications for user feedback
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-```bash
-Node.js >= 16.x
-npm >= 8.x
-Git
-```
-
-### Installation
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/himaenshuu/InstaLens.git
-cd InstaLens
-```
-
-2. **Install dependencies**
-```bash
-npm install
-```
-
-3. **Set up environment variables**
-```bash
-# Copy the example environment file
-cp .env.example .env
-
-# Edit .env with your API keys:
-# - VITE_SUPABASE_URL
-# - VITE_SUPABASE_ANON_KEY
-# - VITE_APIFY_API_TOKEN
-# - VITE_GOOGLE_VISION_API_KEY (optional)
-```
-
-4. **Start development server**
-```bash
-npm run dev
-```
-
-5. **Open your browser**
-```
-http://localhost:3000
-```
-
-### Build for Production
-```bash
-npm run build
-npm run preview  # Preview production build locally
-```
-
----
-
-## 📂 Project Structure
-
-```
-InstaLens/
-├── src/
-│   ├── components/          # React components
-│   │   ├── ui/             # shadcn/ui components (40+ components)
-│   │   ├── AnalyticsSection.tsx
-│   │   ├── ProfileHeader.tsx
-│   │   ├── ContentInsights.tsx
-│   │   └── ...
-│   ├── services/           # API integration & business logic
-│   │   ├── api.ts          # Instagram API service
-│   │   ├── contentAnalysis.ts  # AI analysis service
-│   │   ├── visionService.ts    # Google Vision integration
-│   │   └── ...
-│   ├── hooks/              # Custom React hooks
-│   ├── utils/              # Helper functions & utilities
-│   │   └── supabase/       # Supabase client configuration
-│   ├── styles/             # Global styles
-│   └── App.tsx             # Main application component
-├── supabase/
-│   ├── migrations/         # Database schema migrations
-│   └── functions/          # Serverless edge functions
-├── public/                 # Static assets
-├── build/                  # Production build output
-├── .env.example            # Environment variables template
-├── vite.config.ts          # Vite configuration
-├── tailwind.config.js      # Tailwind CSS configuration
-└── package.json            # Project dependencies
-```
 
 ---
 
