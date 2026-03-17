@@ -9,7 +9,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
 
-[Live Demo](https://drive.google.com/file/d/1hYIJlTjcyP-uu--Eozp_xX0uU_p1LZw_/view) • [Live Site](https://insta-lens.vercel.app/) • [Documentation](./README.md) • [Deployment Guide](https://himaenshuu.github.io/InstaLens/)
+[Live Demo](https://drive.google.com/file/d/1hYIJlTjcyP-uu--Eozp_xX0uU_p1LZw_/view) • [Live Site](https://insta-lens.vercel.app/) • [Documentation](./README.md/) • [Deployment Guide](https://himaenshuu.github.io/InstaLens/)
 
 </div>
 
