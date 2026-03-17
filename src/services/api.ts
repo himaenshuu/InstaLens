@@ -1,5 +1,6 @@
 // Real API service powered by Supabase and Apify Instagram scraper
 import { projectId, publicAnonKey } from "../utils/supabase/info";
+import { createProxiedImageUrl } from "../utils/imageProxy";
 
 export interface ProfileData {
   profileImage: string;
@@ -618,7 +619,12 @@ export const apiService = {
       }
 
       const result = await response.json();
-      return result.profiles || [];
+      const profiles = result.profiles || [];
+
+      return profiles.map((profile: any) => ({
+        ...profile,
+        profile_image_url: createProxiedImageUrl(profile.profile_image_url || ""),
+      }));
     } catch (error) {
       return [];
     }

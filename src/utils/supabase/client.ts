@@ -104,6 +104,6 @@ export async function testServerFunction() {
 // Export connection info for debugging
 export const connectionInfo = {
   supabaseUrl,
-  projectId: "rjkeumzejojdzazrckew",
+  projectId: new URL(supabaseUrl).host.split(".")[0],
   hasAnonKey: !!supabaseAnonKey,
 };

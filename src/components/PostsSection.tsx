@@ -12,15 +12,19 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
-import { apiService, PostData } from "../services/api";
+import { apiService, PostData, ProfileData } from "../services/api";
 import { ContentInsightsTags } from "./ContentInsights";
 import { analyzePost, getVisionApiKey } from "../services/analysisIntegration";
 import { AnalysisResult } from "../services/contentAnalysis";
 
 interface PostsSectionProps {
   isVisible?: boolean;
+  profileData?: ProfileData & { posts?: PostData[] };
 }
-export function PostsSection({ isVisible = true }: PostsSectionProps) {
+export function PostsSection({
+  isVisible = true,
+  profileData,
+}: PostsSectionProps) {
   const [posts, setPosts] = useState<PostData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -60,10 +64,28 @@ export function PostsSection({ isVisible = true }: PostsSectionProps) {
   }, []);
 
   useEffect(() => {
-    if (isVisible) {
-      loadPosts(1, true);
+    if (!isVisible) return;
+
+    const scrapedPosts = profileData?.posts;
+    if (Array.isArray(scrapedPosts) && scrapedPosts.length > 0) {
+      const initialPageSize = 9;
+      setPosts(scrapedPosts.slice(0, initialPageSize));
+      setHasMore(scrapedPosts.length > initialPageSize);
+      setPage(1);
+      setError(null);
+      setIsLoading(false);
+      return;
     }
-  }, [isVisible, loadPosts]);
+
+    setPage(1);
+    loadPosts(1, true);
+  }, [
+    isVisible,
+    loadPosts,
+    profileData?.username,
+    profileData?.postsCount,
+    profileData?.followers,
+  ]);
 
   // Analyze posts when they're loaded
   useEffect(() => {

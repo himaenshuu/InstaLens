@@ -53,6 +53,29 @@ export default defineConfig({
   build: {
     target: "esnext",
     outDir: "build",
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+
+          if (id.includes("react") || id.includes("react-dom")) {
+            return "react-vendor";
+          }
+
+          if (id.includes("@radix-ui") || id.includes("vaul")) {
+            return "radix-vendor";
+          }
+
+          if (id.includes("recharts") || id.includes("embla-carousel-react")) {
+            return "charts-vendor";
+          }
+
+          if (id.includes("supabase")) {
+            return "supabase-vendor";
+          }
+        },
+      },
+    },
   },
   server: {
     port: 3000,

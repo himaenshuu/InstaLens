@@ -135,7 +135,7 @@ export function ProfileContent({
 
   // Handle other tabs
   if (activeTab === "posts") {
-    return <PostsSection />;
+    return <PostsSection profileData={profileData} />;
   }
 
   if (activeTab === "reels") {

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { createProxiedImageUrl } from "../../utils/imageProxy";
+import React, { useEffect, useState } from "react";
+import { getProxiedImageCandidates } from "../../utils/imageProxy";
 
 const ERROR_IMG_SRC =
   "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODgiIGhlaWdodD0iODgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIuMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIzLjciPjxyZWN0IHg9IjE2IiB5PSIxNiIgd2lkdGg9IjU2IiBoZWlnaHQ9IjU2IiByeD0iNiIvPjxwYXRoIGQ9Im0xNiA1OCAxNi0xOCAzMiAzMiIvPjxjaXJjbGUgY3g9IjUzIiBjeT0iMzUiIHI9IjciLz48L3N2Zz4KCg==";
@@ -8,15 +8,25 @@ export function ImageWithFallback(
   props: React.ImgHTMLAttributes<HTMLImageElement>
 ) {
   const [didError, setDidError] = useState(false);
-
-  const handleError = () => {
-    setDidError(true);
-  };
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const { src, alt, style, className, ...rest } = props;
 
-  // Use proxy for external images to avoid CORS issues
-  const proxiedSrc = src ? createProxiedImageUrl(src) : src;
+  const sourceCandidates = src ? getProxiedImageCandidates(src) : [];
+  const currentSrc = sourceCandidates[currentIndex] ?? src;
+
+  useEffect(() => {
+    setDidError(false);
+    setCurrentIndex(0);
+  }, [src]);
+
+  const handleError = () => {
+    if (currentIndex < sourceCandidates.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+      return;
+    }
+    setDidError(true);
+  };
 
   return didError ? (
     <div
@@ -36,7 +46,7 @@ export function ImageWithFallback(
     </div>
   ) : (
     <img
-      src={proxiedSrc}
+      src={currentSrc}
       alt={alt}
       className={className}
       style={style}

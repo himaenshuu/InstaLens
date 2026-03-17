@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Search, CheckCircle2 } from "lucide-react";
 import { Input } from "./ui/input";
 import { apiService } from "../services/api";
+import { createProxiedImageUrl } from "../utils/imageProxy";
 
 interface Profile {
   username: string;
@@ -126,12 +127,14 @@ export function SearchWithSuggestions({
                 className="w-full px-3 py-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left"
               >
                 <img
-                  src={profile.profile_image_url}
+                  src={createProxiedImageUrl(profile.profile_image_url)}
                   alt={profile.display_name}
                   className="w-10 h-10 rounded-full object-cover"
                   onError={(e) => {
                     const img = e.target as HTMLImageElement;
-                    img.src = `https://ui-avatars.com/api/?name=${profile.display_name}&background=6366f1&color=fff`;
+                    img.src = createProxiedImageUrl(
+                      `https://ui-avatars.com/api/?name=${profile.display_name}&background=6366f1&color=fff`
+                    );
                   }}
                 />
                 <div className="flex-1 min-w-0">

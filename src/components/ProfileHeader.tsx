@@ -3,7 +3,8 @@ import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
 import { ProfileData } from "../services/api";
-import { createProxiedImageUrl } from "../utils/imageProxy";
+import { getProxiedImageCandidates } from "../utils/imageProxy";
+import { useEffect, useState } from "react";
 
 interface ProfileHeaderProps {
   profileData?: ProfileData;
@@ -14,6 +15,31 @@ export function ProfileHeader({
   profileData,
   isLoading = false,
 }: ProfileHeaderProps) {
+  const originalProfileImage = profileData?.profileImage || "";
+  const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    profileData?.name || profileData?.username || "User"
+  )}&background=6366f1&color=fff&size=128`;
+
+  const avatarCandidates = [
+    ...getProxiedImageCandidates(originalProfileImage),
+    fallbackAvatar,
+  ];
+  const [avatarCandidateIndex, setAvatarCandidateIndex] = useState(0);
+
+  const avatarSrc =
+    avatarCandidates[avatarCandidateIndex] || originalProfileImage || "";
+
+  useEffect(() => {
+    setAvatarCandidateIndex(0);
+  }, [originalProfileImage]);
+
+  const handleAvatarError = () => {
+    if (avatarCandidateIndex < avatarCandidates.length - 1) {
+      setAvatarCandidateIndex((prev) => prev + 1);
+      return;
+    }
+  };
+
   const formatNumber = (num: number) => {
     if (num >= 1000000) {
       return (num / 1000000).toFixed(1) + "M";
@@ -79,8 +105,11 @@ export function ProfileHeader({
           <div className="relative group">
             <Avatar className="h-24 w-24 md:h-32 md:w-32 ring-4 ring-gradient-to-r from-purple-500 to-blue-500 ring-offset-4 ring-offset-background transition-all duration-300 group-hover:scale-110">
               <AvatarImage
-                src={createProxiedImageUrl(profileData.profileImage)}
+                key={avatarSrc}
+                src={avatarSrc}
                 alt={profileData.name}
+                onError={handleAvatarError}
+                referrerPolicy="no-referrer"
               />
               <AvatarFallback className="text-lg md:text-xl bg-gradient-to-r from-purple-600 to-blue-600 text-white">
                 {profileData.name

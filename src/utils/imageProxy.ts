@@ -1,36 +1,54 @@
 // Helper function to ensure images use the proxy to avoid CORS issues
 import { projectId, publicAnonKey } from "./supabase/info";
 
-export function createProxiedImageUrl(originalUrl: string): string {
-  // Don't proxy UI avatars, data URLs, or already proxied URLs
-  if (
-    !originalUrl ||
-    originalUrl.includes("ui-avatars.com") ||
-    originalUrl.startsWith("data:") ||
-    originalUrl.includes("supabase.co/functions")
-  ) {
-    return originalUrl;
+function isBypassUrl(url: string): boolean {
+  return (
+    !url ||
+    url.includes("ui-avatars.com") ||
+    url.startsWith("data:") ||
+    url.startsWith("blob:") ||
+    url.startsWith("/") ||
+    url.includes("supabase.co/functions")
+  );
+}
+
+function createSupabaseProxyUrl(originalUrl: string): string {
+  return `https://${projectId}.supabase.co/functions/v1/make-server-b9769089/proxy-image?url=${encodeURIComponent(
+    originalUrl
+  )}&apikey=${encodeURIComponent(publicAnonKey)}`;
+}
+
+function createWeservProxyUrl(originalUrl: string): string {
+  return `https://images.weserv.nl/?url=${encodeURIComponent(
+    originalUrl
+  )}&output=webp`;
+}
+
+export function getProxiedImageCandidates(originalUrl: string): string[] {
+  if (isBypassUrl(originalUrl)) {
+    return originalUrl ? [originalUrl] : [];
   }
 
-  // If it's an Instagram URL, use the proxy
+  if (!originalUrl.startsWith("http")) {
+    return [originalUrl];
+  }
+
+  const candidates = [createSupabaseProxyUrl(originalUrl)];
+
   if (
     originalUrl.includes("instagram.com") ||
     originalUrl.includes("cdninstagram.com") ||
     originalUrl.includes("fbcdn.net")
   ) {
-    const proxiedUrl = `https://${projectId}.supabase.co/functions/v1/make-server-b9769089/proxy-image?url=${encodeURIComponent(
-      originalUrl
-    )}&apikey=${publicAnonKey}`;
-    return proxiedUrl;
+    candidates.push(createWeservProxyUrl(originalUrl));
   }
 
-  // For other external URLs, also use proxy to be safe
-  if (originalUrl.startsWith("http")) {
-    const proxiedUrl = `https://${projectId}.supabase.co/functions/v1/make-server-b9769089/proxy-image?url=${encodeURIComponent(
-      originalUrl
-    )}&apikey=${publicAnonKey}`;
-    return proxiedUrl;
-  }
+  candidates.push(originalUrl);
 
-  return originalUrl;
+  return [...new Set(candidates)];
+}
+
+export function createProxiedImageUrl(originalUrl: string): string {
+  const candidates = getProxiedImageCandidates(originalUrl);
+  return candidates[0] || originalUrl;
 }

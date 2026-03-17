@@ -13,6 +13,7 @@ import { CheckCircle, XCircle, RefreshCw, Database } from "lucide-react";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const projectId = supabaseUrl ? new URL(supabaseUrl).host.split(".")[0] : "N/A";
 
 export function DatabaseTest() {
   const [isLoading, setIsLoading] = useState(false);
@@ -262,7 +263,7 @@ export function DatabaseTest() {
             <strong>Database URL:</strong> {supabaseUrl}
           </p>
           <p>
-            <strong>Project ID:</strong> rjkeumzejojdzazrckew
+            <strong>Project ID:</strong> {projectId}
           </p>
         </div>
       </CardContent>
